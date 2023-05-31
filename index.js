@@ -14,10 +14,10 @@ app.get('/', async (req, res) => {
 
 // Home page
 // Get latest soil detection history
-app.get('/history/latest/{user_id}', async (req, res) => {
+app.get('/history/latest/:user_id', async (req, res) => {
     try {
         const user_id = req.params.user_id;
-        const query = db.collection('').where('user_id', '==', user_id).orderBy('timestamp', 'desc').limit(1);
+        const query = db.collection('list_history').where('user_id', '==', user_id).orderBy('created_at', 'desc').limit(1);
         const querySnapshot = await query.get();
         // const data = querySnapshot.docs.map(doc => doc.data());
         if (querySnapshot.size > 0) {
@@ -35,7 +35,7 @@ app.get('/history/latest/{user_id}', async (req, res) => {
 // Get 5 campaign data
 app.get('/campaign/limit', async (req, res) => {
     try {
-        const query = db.collection('').orderBy('timestamp', 'desc').limit(5);
+        const query = db.collection('all_campaign').orderBy('created_at', 'desc').limit(5);
         const querySnapshot = await query.get();
         const data = querySnapshot.docs.map(doc => doc.data());
         res.json(data); 
