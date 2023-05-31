@@ -1,0 +1,25 @@
+{
+  "name": "soilit-rest-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoilIt/Backend-Application.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SoilIt/Backend-Application/issues"
+  },
+  "homepage": "https://github.com/SoilIt/Backend-Application#readme",
+  "dependencies": {
+    "@google-cloud/firestore": "^6.6.0",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2"
+  }
+}
