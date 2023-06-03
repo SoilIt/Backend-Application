@@ -17,30 +17,51 @@ app.get('/', async (req, res) => {
 app.get('/history/latest/:user_id', async (req, res) => {
     try {
         const user_id = req.params.user_id;
-        const query = db.collection('list_history').where('user_id', '==', user_id).orderBy('created_at', 'desc').limit(1);
+        const query = db.collection('history').doc('latest').collection('user_id').where('user_id', '==', user_id);
+        //.orderBy('created_at', 'desc').limit(1);
         const querySnapshot = await query.get();
-        // const data = querySnapshot.docs.map(doc => doc.data());
+        let dataArr = [];
+        querySnapshot.forEach(result=> {
+            dataArr.push(result.data());
+        })
+        
+        console.log(`querySnapshot size = ${querySnapshot.size}`);
         if (querySnapshot.size > 0) {
-            res.json(querySnapshot.docs[0].data());
+            res.send(dataArr);
             res.status(200);
         }
         else {
             res.json({status: 'Not found'});
         }
-    } catch (error) {
+    } catch (error){
+        console.log("Error occured!!");
+        console.log(error);
         res.status(500).send(error);
-    }
-    
+    } 
+
 })
+
 // Get 5 campaign data
 app.get('/campaign/limit', async (req, res) => {
     try {
-        const query = db.collection('all_campaign').orderBy('created_at', 'desc').limit(5);
+        const query = db.collection('campaign').doc('limit').collection('data').orderBy('created_at', 'desc').limit(5);;
         const querySnapshot = await query.get();
-        const data = querySnapshot.docs.map(doc => doc.data());
-        res.json(data); 
-        res.status(200);
-    } catch (error) {
+        let dataArr = [];
+        querySnapshot.forEach(result=> {
+            dataArr.push(result.data());
+        })
+        
+        console.log(`querySnapshot size = ${querySnapshot.size}`);
+        if (querySnapshot.size > 0) {
+            res.send(dataArr);
+            res.status(200);
+        }
+        else {
+            res.json({status: 'Not found'});
+        }
+    } catch (error){
+        console.log("Error occured!!");
+        console.log(error);
         res.status(500).send(error);
     }
 })
