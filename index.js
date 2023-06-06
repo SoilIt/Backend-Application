@@ -1,5 +1,6 @@
 const express = require('express');
 const Firestore = require('@google-cloud/firestore')
+const uuid = require('uuid');
 const db = new Firestore();
 const app = express();
 app.use(express.json());
@@ -17,7 +18,7 @@ app.get('/', async (req, res) => {
 app.get('/history/latest/:user_id', async (req, res) => {
     try {
         const user_id = req.params.user_id;
-        const query = db.collection('history').doc('latest').collection('user_id').where('user_id', '==', user_id);
+        const query = db.collection('history').where('user_id', '==', user_id).orderBy('created_at', 'desc').limit(1);
         //.orderBy('created_at', 'desc').limit(1);
         const querySnapshot = await query.get();
         let dataArr = [];
@@ -44,7 +45,8 @@ app.get('/history/latest/:user_id', async (req, res) => {
 // Get 5 campaign data
 app.get('/campaign/limit', async (req, res) => {
     try {
-        const query = db.collection('campaign').doc('limit').collection('data').orderBy('created_at', 'desc').limit(5);;
+        const query = db.collection('campaign').orderBy('created_at', 'desc').limit(5);
+        // .orderBy('created_at', 'desc')
         const querySnapshot = await query.get();
         let dataArr = [];
         querySnapshot.forEach(result=> {
@@ -64,4 +66,27 @@ app.get('/campaign/limit', async (req, res) => {
         console.log(error);
         res.status(500).send(error);
     }
+})
+
+app.post('/history', async (req, res) => {
+    try {
+        let date = new Date().toJSON();
+        const data = {
+            created_at : date,
+            id : uuid.v4(),
+            image : request.body.image,
+            user_id : request.body.user_id,
+            soil_type : request.body.soil_type,
+            soil_moisture: request.body.soil_moisture,
+            soil_temperature: request.body.soil_temperature,
+            soil_condition: request.body.soil_condition
+        }
+        await db.collection('dogs').doc().set(data);
+        res.status(201).send('History created successfully');
+    } catch (error) {
+        console.log("Error occured!!");
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
 })
