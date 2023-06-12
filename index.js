@@ -105,8 +105,15 @@ app.delete('/history/:id', async (req, res) => {
     const id = req.params.id;
     const query = db.collection('history').where('id', '==', id);
     const querySnapshot = await query.delete();
-    res.status(200).json ({
-        message: 'history deleted successfuly'
-    })
-    
-})
+    if (err) {
+      return res.status(500).json({
+          status: false,
+          message: 'Internal Server Error',
+      })
+  } else {
+      return res.status(200).json({
+          status: true,
+          message: 'Delete Data Successfully!',
+      })
+  }
+});
