@@ -208,10 +208,13 @@ app.get('/history/:id', async (req, res) =>{
 )
 
 //DELETE history
-app.delete('/history/:id', async (req, res) => {
+app.delete('/history/delete/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const query = db.collection('history').where('id', '==', id).delete();
+        const querySnapshot = await db.collection('history').where('id', '==', id).get();
+        querySnapshot.forEach(doc => {
+            doc.ref.delete();
+        });
         res.status(200).json({
             status: true,
             message: 'Delete Data Successfully!',
@@ -221,16 +224,4 @@ app.delete('/history/:id', async (req, res) => {
         console.log(error);
         res.status(500).send(error);
     }
-    //const querySnapshot = await query.delete();
-    /*if (err) {
-    return res.status(500).json({
-        status: false,
-        message: 'Internal Server Error',
-    })
-    } else {
-    return res.status(200).json({
-        status: true,
-        message: 'Delete Data Successfully!',
-    })
-    }*/
 });
