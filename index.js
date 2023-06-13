@@ -49,7 +49,7 @@ app.get('/history/latest/:id', async (req, res) => {
             res.status(200);
         }
         else {
-            res.json({status: 'Not found'});
+            res.json({status: 'Can not found data'});
         }
     } catch (error){
         console.log("Error occured!!");
@@ -76,7 +76,7 @@ app.get('/campaign/limit', async (req, res) => {
             });
         }
         else {
-            res.json({status: 'Not found'});
+            res.json({status: 'Can not found data'});
         }
     } catch (error){
         console.log("Error occured!!");
@@ -120,7 +120,7 @@ app.post('/history', async (req, res) => {
 //GET list campaign
 app.get('/campaign', async (req, res) =>{
     try {
-        const query = db.collection('campaign').orderBy('created_at')
+        const query = db.collection('campaign').orderBy('created_at', 'desc')
         const querySnapshot = await query.get()
         let dataArr = [];
         querySnapshot.forEach(result=> {
@@ -135,7 +135,7 @@ app.get('/campaign', async (req, res) =>{
         }
         else {
             res.jsonp({
-            message:  "Can not found"
+            message:  "Can not found data"
             })
         }
     } catch (error){
@@ -147,11 +147,11 @@ app.get('/campaign', async (req, res) =>{
 })
 
 
-
 //GET list history
-app.get('/history', async (req, res) =>{
+app.get('/history/:id', async (req, res) =>{
     try {
-        const query = db.collection('history').orderBy('created_at')
+        const user_id = req.params.id
+        const query = db.collection('history').where('user_id', '==', user_id).orderBy('created_at', 'desc');
         const querySnapshot = await query.get()
         let dataArr = [];
         querySnapshot.forEach(result=> {
@@ -160,12 +160,13 @@ app.get('/history', async (req, res) =>{
         
         console.log(`querySnapshot size = ${querySnapshot.size}`)
         if (querySnapshot.size > 0) {
-            res.send(dataArr)
-            res.status(200)
+            res.status(200).send({
+                data : dataArr
+            });
         }
         else {
             res.jsonp({
-              message:  "Can not found"
+              message:  "Can not found data"
             })
         }
     } catch (error){
@@ -188,12 +189,13 @@ app.get('/faq', async (req, res) =>{
         
         console.log(`querySnapshot size = ${querySnapshot.size}`)
         if (querySnapshot.size > 0) {
-            res.send(dataArr)
-            res.status(200)
+            res.status(200).send({
+                data : dataArr
+            });
         }
         else {
             res.jsonp({
-            message:  "Can not found"
+            message:  "Can not found data"
             })
         }
     } catch (error){
@@ -205,10 +207,11 @@ app.get('/faq', async (req, res) =>{
 })
 
 //GET detail history
-app.get('/history/:id', async (req, res) =>{
+app.get('/history/:user_id/:id', async (req, res) =>{
     try {
+        const user_id = req.params.user_id;
         const id = req.params.id;
-        const query = db.collection('history').where('id', '==', id);
+        const query = db.collection('history').where('id', '==', id).where('user_id', '==', user_id);
         const querySnapshot = await query.get();
         let dataArr = [];
 
@@ -223,7 +226,7 @@ app.get('/history/:id', async (req, res) =>{
         }
         else {
             res.jsonp({
-            message:  "Can not found"
+            message:  "Can not found data"
             })
         }
     } catch (error){
@@ -252,7 +255,7 @@ app.get('/campaign/:id', async (req, res) =>{
         }
         else {
             res.jsonp({
-            message:  "Can not found"
+            message:  "Can not found data"
             })
         }
     } catch (error){
