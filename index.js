@@ -31,8 +31,8 @@ app.get('/', async (req, res) => {
     res.send('SoilIt is ready!');
 })
 
-// Home page
-// Get latest soil detection history
+//Home page
+//GET latest soil detection history
 app.get('/history/latest/:id', async (req, res) => {
     try {
         const user_id = req.params.id;
@@ -59,7 +59,7 @@ app.get('/history/latest/:id', async (req, res) => {
 
 })
 
-// Get 5 campaign data
+//GET 10 campaign data
 app.get('/campaign/limit', async (req, res) => {
     try {
         const query = db.collection('campaign').orderBy('created_at', 'desc').limit(10);
@@ -71,8 +71,9 @@ app.get('/campaign/limit', async (req, res) => {
         
         console.log(`querySnapshot size = ${querySnapshot.size}`);
         if (querySnapshot.size > 0) {
-            res.send(dataArr);
-            res.status(200);
+            res.status(200).send({
+                data : dataArr
+            });
         }
         else {
             res.json({status: 'Not found'});
@@ -84,7 +85,7 @@ app.get('/campaign/limit', async (req, res) => {
     }
 })
 
-//Post History
+//POST History
 app.post('/history', async (req, res) => {
     try {
         const myFile = req.file;
@@ -120,55 +121,71 @@ app.post('/history', async (req, res) => {
 
 //GET list campaign
 app.get('/campaign', async (req, res) =>{
-    const query = db.collection('campaign').orderBy('created_at')
-    const querySnapshot = await query.get()
-    let dataArr = [];
-    querySnapshot.forEach(result=> {
-    dataArr.push(result.data())
-    })
-    
-    console.log(`querySnapshot size = ${querySnapshot.size}`)
-    if (querySnapshot.size > 0) {
-        res.send(dataArr)
-        res.status(200)
-    }
-    else {
-        res.jsonp({
-          message:  "Can not found"
+    try {
+        const query = db.collection('campaign').orderBy('created_at')
+        const querySnapshot = await query.get()
+        let dataArr = [];
+        querySnapshot.forEach(result=> {
+        dataArr.push(result.data())
         })
-     }
-}
-)
+        
+        console.log(`querySnapshot size = ${querySnapshot.size}`)
+        if (querySnapshot.size > 0) {
+            res.status(200).send({
+                data : dataArr
+            });
+        }
+        else {
+            res.jsonp({
+            message:  "Can not found"
+            })
+        }
+    } catch (error){
+        console.log("Error occured!!");
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
+})
+
+
 
 //GET list history
 app.get('/history', async (req, res) =>{
-    const query = db.collection('history').orderBy('created_at')
-    const querySnapshot = await query.get()
-    let dataArr = [];
-    querySnapshot.forEach(result=> {
-    dataArr.push(result.data())
-    })
-    
-    console.log(`querySnapshot size = ${querySnapshot.size}`)
-    if (querySnapshot.size > 0) {
-        res.send(dataArr)
-        res.status(200)
-    }
-    else {
-        res.jsonp({
-          message:  "Can not found"
-        })
-     }
-}
-)
-
-// list FAQ
-app.get('/faq', async (req, res) =>{
-    const query = db.collection('FAQ');
-    const querySnapshot = await query.get();
-    let dataArr = [];
+    try {
+        const query = db.collection('history').orderBy('created_at')
+        const querySnapshot = await query.get()
+        let dataArr = [];
         querySnapshot.forEach(result=> {
         dataArr.push(result.data())
+        })
+        
+        console.log(`querySnapshot size = ${querySnapshot.size}`)
+        if (querySnapshot.size > 0) {
+            res.send(dataArr)
+            res.status(200)
+        }
+        else {
+            res.jsonp({
+              message:  "Can not found"
+            })
+        }
+    } catch (error){
+        console.log("Error occured!!");
+        console.log(error);
+        res.status(500).send(error);
+    }
+    
+})
+
+//GET list FAQ
+app.get('/faq', async (req, res) =>{
+    try {
+        const query = db.collection('FAQ');
+        const querySnapshot = await query.get();
+        let dataArr = [];
+        querySnapshot.forEach(result=> {
+            dataArr.push(result.data())
         })
         
         console.log(`querySnapshot size = ${querySnapshot.size}`)
@@ -181,15 +198,22 @@ app.get('/faq', async (req, res) =>{
             message:  "Can not found"
             })
         }
+    } catch (error){
+        console.log("Error occured!!");
+        console.log(error);
+        res.status(500).send(error);
     }
-)
+    
+})
 
 //GET detail history
 app.get('/history/:id', async (req, res) =>{
-    const id = req.params.id;
-    const query = db.collection('history').where('id', '==', id);
-    const querySnapshot = await query.get();
-    let dataArr = [];
+    try {
+        const id = req.params.id;
+        const query = db.collection('history').where('id', '==', id);
+        const querySnapshot = await query.get();
+        let dataArr = [];
+
         querySnapshot.forEach(result=> {
         dataArr.push(result.data())
         })
@@ -204,8 +228,41 @@ app.get('/history/:id', async (req, res) =>{
             message:  "Can not found"
             })
         }
+    } catch (error){
+        console.log("Error occured!!");
+        console.log(error);
+        res.status(500).send(error);
     }
-)
+})
+
+//GET detail campaign
+app.get('/campaign/:id', async (req, res) =>{
+    try {
+        const campaign_id = req.params.id;
+        const query = db.collection('campaign').where('id', '==', campaign_id);
+        const querySnapshot = await query.get();
+        let dataArr = [];
+
+        querySnapshot.forEach(result=> {
+        dataArr.push(result.data())
+        })
+        
+        console.log(`querySnapshot size = ${querySnapshot.size}`)
+        if (querySnapshot.size > 0) {
+            res.send(dataArr)
+            res.status(200)
+        }
+        else {
+            res.jsonp({
+            message:  "Can not found"
+            })
+        }
+    } catch (error){
+        console.log("Error occured!!");
+        console.log(error);
+        res.status(500).send(error);
+    }
+})
 
 //DELETE history
 app.delete('/history/delete/:id', async (req, res) => {
