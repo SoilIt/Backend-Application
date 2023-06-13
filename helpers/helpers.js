@@ -1,5 +1,5 @@
 const util = require('util');
-const gc = require('../config/');
+const gc = require('../config/index');
 const bucket = gc.bucket('image_by_user') // should be your bucket name
 
 const { format } = util;

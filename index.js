@@ -91,23 +91,21 @@ app.post('/history', async (req, res) => {
         const myFile = req.file;
         const imageURL = await uploadImage(myFile);
         console.log('test image url output!')
-        //console.log(uuid.v4());
-        //let date = new Date().toJSON();
-        /*const data = {
+        let date = new Date().toJSON();
+        const data = {
             created_at : date,
             id : uuid.v4(),
-            image : 'testing',
+            image : imageURL,
             user_id : req.body.user_id,
             soil_type : req.body.soil_type,
             soil_moisture: req.body.soil_moisture,
             soil_temperature: req.body.soil_temperature,
             soil_condition: req.body.soil_condition,
-        }*/
-        //await db.collection('history').doc().set(data);
+        }
+        await db.collection('history').doc().set(data);
         console.log('test post data!')
-        res.status(201).send('History created successfully')
-        .json({
-            message: "Upload was successful",
+        res.status(201).json({
+            message: 'Image successfully uploaded and history was created!',
             data: imageURL
         });
 
