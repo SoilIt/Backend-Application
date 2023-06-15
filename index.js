@@ -1,3 +1,5 @@
+//import { rateLimiterUsingThirdParty } from '../middlewares';
+const { rateLimiterUsingThirdParty } = require('./middlewares');
 const express = require('express');
 const Firestore = require('@google-cloud/firestore')
 const uuid = require('uuid');
@@ -22,6 +24,7 @@ app.use(multerMid.single('file'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
+app.use(rateLimiterUsingThirdParty);
 
 app.listen(port, () => {
     console.log(`SoilIt Rest API listening on port ${port}`);
